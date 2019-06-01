@@ -173,11 +173,12 @@ describe.only('Searchbox utility', () => {
     expect(Sut.getNodeText(activeNode)).to.be.equal(Sut.getNodeText(expected));
   });
 
-  it.only('should return accurately walk active node', () => {
+  it('should accurately walk active node', () => {
     const Sut = new sutImport('xyzxy');
     Sut.build();
-    Sut.activeEdgePos = 0; // y
-    Sut.activeLength = 2;
+    Sut.activeEdgePos = 0; // x
+    Sut.activeLength = 2; // y [1]
+    Sut.activeNode = Sut.root;
 
     const expected = Sut.root.edges.get('x');
     const activeNode  = Sut.getActiveNode(true);
@@ -209,17 +210,18 @@ describe.only('Searchbox utility', () => {
     const Sut = new sutImport('xyzxy');
     Sut.build();
     const node = Sut.root.edges.get('x');
-    const newNode = Sut.createNode();
+    Sut.activeLength = 2;
+
     Sut.split(node, 2, 'v', 5);
 
     expect(node.edges.size).to.equal(2);
     expect(node.getRightInd()).to.equal(1);
     expect(node.edges.has('z')).to.be.true;
     expect(node.edges.get('z').getLeftInd).to.equal(2);
-    expect(node.edges.get('z').getRightInd()).to.equal(4);
+    expect(node.edges.get('z').getRightInd()).to.equal(7);
     expect(node.edges.has('v')).to.be.true;
     expect(node.edges.get('v').getLeftInd).to.equal(5);
-    expect(node.edges.get('v').getRightInd()).to.equal(4);
+    expect(node.edges.get('v').getRightInd()).to.equal(7);
   });
 
   it('should break node at next different character', () => {
@@ -231,6 +233,7 @@ describe.only('Searchbox utility', () => {
     expect(Sut.root.edges.get('x').getLeftInd).to.equal(0);
     expect(Sut.root.edges.get('x').edges.get('z').getLeftInd).to.equal(2);
     expect(Sut.root.edges.get('x').edges.get('a').getLeftInd).to.equal(5);
+    expect(Sut.root.edges.get('y').edges.size).to.equal(2);
   });
 
   it('should point internal node to root', () => {

@@ -28,7 +28,7 @@ export default class Ukonnens {
     this.getNodeCharAt = this.getNodeCharAt.bind(this);
     this.toString = this.toString.bind(this);
 
-    this.root = this.createNode(0);
+    this.root = this.createNode(-1);
   }
 
   pathExistsFrom(node, letter) {
@@ -60,7 +60,8 @@ export default class Ukonnens {
     node.edges.set(this.getNodeCharAt(node, position), pathFromOldBranch);
     node.edges.set(newPathKey, this.createNode(newLeftIndex, () => this.end));
 
-    const newRight = node.getLeftInd + this.activeLength;
+    // this.activeLength is not zero based
+    const newRight = (node.getLeftInd + this.activeLength) - 1;
     node.getRightInd = () => newRight;
   }
 
@@ -71,21 +72,20 @@ export default class Ukonnens {
     this.activeNode = this.getActiveNode();
     this.startPhase();
     if (this.activeLength > 0) {
-      const nextChar = this.getNextCharacter();
+      const nextChar = this.getPhaseChar();
       const nextCharInActiveNode = this.getNodeNextChar();
       if (nextChar === nextCharInActiveNode) {
         this.activeLength++;
         return this.build();
       }
       else {
-        const activeTraversedNode = this.getActiveNode(true);
-        this.split(activeTraversedNode, this.activeLength + 1, nextChar, this.phase + 1);
-        activeTraversedNode.suffixLink = this.root;
+        this.split(this.activeNode, this.activeLength, nextChar, this.phase);
+        this.activeNode.suffixLink = this.root;
         this.remaining--;
         this.activeEdgePos++;
-        console.log('actep', this.activeEdgePos);
         this.activeLength--;
         return this.build();
+        // return;
       }
     }
     while(this.remaining > 0) {
@@ -125,11 +125,14 @@ export default class Ukonnens {
   }
 
   getActiveNode(forceWalk = false) {
-    if (!this.activeNode || this.activeEdgePos === -1 || (this.activeEdgePos === 0 && !forceWalk)) return this.root;
+    if (this.activeEdgePos < 0) return this.root;
 
     const text = this.text[this.activeEdgePos];
-    return this.activeNode.edges.get(text)
-      || this.activeNode;
+    const node = this.root.edges.get(text);
+    const currentText = this.text[node.getLeftInd + this.activeLength];
+
+    return node.edges.get(currentText)
+      || node;
   }
 
   getNextCharacter() {
