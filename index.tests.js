@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 describe.only('Searchbox utility', () => {
-  const sutImport = importFromFileName(__filename).default;
+  const sutImport = require('./').default;
   let Sut2;
   beforeEach(() => {
     Sut2 = new sutImport('test');

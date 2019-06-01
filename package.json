@@ -4,7 +4,8 @@
   "description": "A suffix tree with character nodes to allow for Trie traversal",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require @babel/register --recursive \"./*.tests.js\"",
+    "test:watch": "mocha -w --require @babel/register --recursive \"./*.tests.js\""
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "chai": "^4.2.0",
     "mocha": "^6.1.4"
   }
 }
