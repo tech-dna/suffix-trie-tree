@@ -1,0 +1,30 @@
+{
+  "name": "suffix-trie-tree",
+  "version": "0.0.1",
+  "description": "A suffix tree with character nodes to allow for Trie traversal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tech-dna/suffix-trie-tree.git"
+  },
+  "keywords": [
+    "Ukkonen",
+    "Suffix-tree",
+    "Trie"
+  ],
+  "author": "Louis Ukiri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tech-dna/suffix-trie-tree/issues"
+  },
+  "homepage": "https://github.com/tech-dna/suffix-trie-tree#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "mocha": "^6.1.4"
+  }
+}
