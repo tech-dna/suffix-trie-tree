@@ -218,22 +218,24 @@ describe.only('Searchbox utility', () => {
     expect(node.getRightInd()).to.equal(1);
     expect(node.edges.has('z')).to.be.true;
     expect(node.edges.get('z').getLeftInd).to.equal(2);
-    expect(node.edges.get('z').getRightInd()).to.equal(7);
+    expect(node.edges.get('z').getRightInd()).to.equal(5);
     expect(node.edges.has('v')).to.be.true;
     expect(node.edges.get('v').getLeftInd).to.equal(5);
-    expect(node.edges.get('v').getRightInd()).to.equal(7);
+    expect(node.edges.get('v').getRightInd()).to.equal(5);
   });
 
-  it('should break node at next different character', () => {
+  it.only('should break node at next different character', () => {
     const Sut = new sutImport('xyzxya');
     Sut.build();
 
+    console.log('ok jim', Sut.getNodeText(Sut.root.edges.get('z')));
     expect(Sut.root.edges.get('x').edges.size).to.equal(2);
     expect(Sut.root.edges.get('x').getRightInd()).to.equal(1);
     expect(Sut.root.edges.get('x').getLeftInd).to.equal(0);
     expect(Sut.root.edges.get('x').edges.get('z').getLeftInd).to.equal(2);
     expect(Sut.root.edges.get('x').edges.get('a').getLeftInd).to.equal(5);
     expect(Sut.root.edges.get('y').edges.size).to.equal(2);
+    // expect(Sut.root.edges.get('z').edges.size).to.equal(0);
   });
 
   it('should point internal node to root', () => {

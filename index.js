@@ -26,6 +26,7 @@ export default class Ukonnens {
     this.getNodeNextChar = this.getNodeNextChar.bind(this);
     this.split = this.split.bind(this);
     this.getNodeCharAt = this.getNodeCharAt.bind(this);
+    this.walkInnerNode = this.walkInnerNode.bind(this);
     this.toString = this.toString.bind(this);
 
     this.root = this.createNode(-1);
@@ -65,29 +66,37 @@ export default class Ukonnens {
     node.getRightInd = () => newRight;
   }
 
+  walkInnerNode() {
+    if (this.activeLength <= 0) return;
+    const nextChar = this.getPhaseChar();
+    const nextCharInActiveNode = this.getNodeNextChar();
+    if (nextChar === nextCharInActiveNode) {
+      this.activeLength++;
+      return this.build();
+    }
+    else {
+      this.split(this.activeNode, this.activeLength, nextChar, this.phase);
+      this.activeNode.suffixLink = this.root;
+      this.remaining++;
+      this.activeEdgePos++;
+      this.activeLength--;
+      this.activeNode = this.getActiveNode();
+      const nextChar2 = this.getNextCharacter();
+      const nextCharInActiveNode = this.getNodeNextChar();
+      if (nextChar2 != nextCharInActiveNode) {
+        this.walkInnerNode();
+      }
+    }
+  }
+
   build(string) {
     if (string) this.text = string;
+    // if (this.phase >= this.text.length - 1) return;
     // if (!this.activeNode) this.activeNode = this.root;
 
     this.activeNode = this.getActiveNode();
     this.startPhase();
-    if (this.activeLength > 0) {
-      const nextChar = this.getPhaseChar();
-      const nextCharInActiveNode = this.getNodeNextChar();
-      if (nextChar === nextCharInActiveNode) {
-        this.activeLength++;
-        return this.build();
-      }
-      else {
-        this.split(this.activeNode, this.activeLength, nextChar, this.phase);
-        this.activeNode.suffixLink = this.root;
-        this.remaining--;
-        this.activeEdgePos++;
-        this.activeLength--;
-        return this.build();
-        // return;
-      }
-    }
+    this.walkInnerNode();
     while(this.remaining > 0) {
       if (!this.pathExistsFrom(this.activeNode, this.getPhaseChar())) {
         if (!this.getPhaseChar()) return;
@@ -143,6 +152,7 @@ export default class Ukonnens {
     // console.log('starting phase', this.end, this.remaining, this.phase);
     this.end++;
     this.remaining++;
+    // if (this.phase >= this.text.length - 1) return;
     this.phase++;
   }
   takePath() {
