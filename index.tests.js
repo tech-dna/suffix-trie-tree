@@ -228,14 +228,14 @@ describe.only('Searchbox utility', () => {
     const Sut = new sutImport('xyzxya');
     Sut.build();
 
-    console.log('ok jim', Sut.getNodeText(Sut.root.edges.get('z')));
+    console.log('suff', Sut.root.edges.get('x').suffixLink);
     expect(Sut.root.edges.get('x').edges.size).to.equal(2);
     expect(Sut.root.edges.get('x').getRightInd()).to.equal(1);
     expect(Sut.root.edges.get('x').getLeftInd).to.equal(0);
     expect(Sut.root.edges.get('x').edges.get('z').getLeftInd).to.equal(2);
     expect(Sut.root.edges.get('x').edges.get('a').getLeftInd).to.equal(5);
     expect(Sut.root.edges.get('y').edges.size).to.equal(2);
-    // expect(Sut.root.edges.get('z').edges.size).to.equal(0);
+    expect(Sut.root.edges.get('z').edges.size).to.equal(0);
   });
 
   it('should point internal node to root', () => {

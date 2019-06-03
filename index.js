@@ -64,6 +64,8 @@ export default class Ukonnens {
     // this.activeLength is not zero based
     const newRight = (node.getLeftInd + this.activeLength) - 1;
     node.getRightInd = () => newRight;
+    node.suffixLink = this.root;
+    this.remaining--;
   }
 
   walkInnerNode() {
@@ -76,16 +78,19 @@ export default class Ukonnens {
     }
     else {
       this.split(this.activeNode, this.activeLength, nextChar, this.phase);
-      this.activeNode.suffixLink = this.root;
+      // this.activeNode.suffixLink = this.root;
       this.remaining++;
       this.activeEdgePos++;
       this.activeLength--;
+      const oldActiveNode = this.activeNode;
       this.activeNode = this.getActiveNode();
       const nextChar2 = this.getNextCharacter();
-      const nextCharInActiveNode = this.getNodeNextChar();
-      if (nextChar2 != nextCharInActiveNode) {
-        this.walkInnerNode();
+      const nextCharInActiveNode2 = this.getNodeNextChar();
+      if (nextChar2 != nextCharInActiveNode2) {
+        this.walkInnerNode(oldActiveNode);
       }
+      // you looped through to the end
+      // if (this.phase + 1 >= this.text.length) this.remaining = 0;
     }
   }
 
@@ -97,16 +102,20 @@ export default class Ukonnens {
     this.activeNode = this.getActiveNode();
     this.startPhase();
     this.walkInnerNode();
+    // if (this.phase + 1 > this.text.length) return;
     while(this.remaining > 0) {
-      if (!this.pathExistsFrom(this.activeNode, this.getPhaseChar())) {
-        if (!this.getPhaseChar()) return;
-        this.activeNode.edges.set(this.getPhaseChar()
-          , this.createNode(this.phase, () => this.end));
+      const currentPhaseChar = this.getPhaseChar();
+      if (!this.pathExistsFrom(this.activeNode, currentPhaseChar)) {
+        if (currentPhaseChar) {
+          console.log('aaaaaa', this.activeNode, currentPhaseChar);
+          this.activeNode.edges.set(currentPhaseChar
+            , this.createNode(this.phase, () => this.end));
+        }
 
         this.remaining--;
       }
       else {
-        this.activeEdgePos = this.getEdgePos(this.activeNode.edges.get(this.getPhaseChar()));
+        this.activeEdgePos = this.getEdgePos(this.activeNode.edges.get(currentPhaseChar));
         this.activeLength++;
         break;
       }
@@ -135,6 +144,7 @@ export default class Ukonnens {
 
   getActiveNode(forceWalk = false) {
     if (this.activeEdgePos < 0) return this.root;
+    if (this.activeLength === 0) return this.root;
 
     const text = this.text[this.activeEdgePos];
     const node = this.root.edges.get(text);
@@ -149,22 +159,9 @@ export default class Ukonnens {
   }
 
   startPhase(i = 0) {
-    // console.log('starting phase', this.end, this.remaining, this.phase);
     this.end++;
     this.remaining++;
-    // if (this.phase >= this.text.length - 1) return;
     this.phase++;
-  }
-  takePath() {
-    this.activeEdge++;
-    this.activeLength++;
-  }
-  tostring(currentNode = this.root) {
-    let content = '';
-    for (const [key, value] of currentNode.edges) {
-      content += key + this.tostring(value);
-    }
-    return content;
   }
   createNode(getLeftInd, getRightInd) {
     const rightIndex = 0;
