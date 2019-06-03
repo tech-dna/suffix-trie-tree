@@ -6,61 +6,6 @@ describe.only('Searchbox utility', () => {
   beforeEach(() => {
     Sut2 = new sutImport('test');
   });
-/*
-  /!*it.only('should increment remaining and end on phase start', () => {
-    Sut.startPhase();
-    expect(Sut.remaining).to.equal(1);
-    expect(Sut.end).to.equal(0);
-  });*!/
-  it('should return expected structure given simple input', () => {
-    const Sut = new sutImport('test');
-    Sut.build('abc');
-    expect(Sut.tostring()).to.equal('abc');
-    expect(Sut.root.edges.size).to.equal(3);
-    expect(Sut.root.edges.get('b').getLeftInd).to.equal(2);
-    expect(Sut.root.edges.get('c').getLeftInd).to.equal(3);
-  });
-  it('should correctly handle duplicates', () => {
-    const Sut = new sutImport('test');
-    Sut.build('abca');
-    expect(Sut.tostring()).to.equal('abc');
-    expect(Sut.root.edges.size).to.equal(3);
-    expect(Sut.getNodeText(Sut.root.edges.get('c'))).to.equal('ca');
-  });
-  it.only('should correctly handle duplicates2', () => {
-    const Sut = new sutImport('test');
-    Sut.build('abcabd');
-    // expect(Sut.root.edges.size).to.equal(4);
-    expect(Sut.root.edges.has('d')).to.be.true;
-    expect(Sut.getNodeText(Sut.root.edges.get('c'))).to.equal('cabd');
-  });
-  it('should not create a new node when path exists', () => {
-    Sut.build('abcba');
-    expect(Sut.root.edges.size).to.equal(3);
-    expect(Sut.root.edges.get('b').size).to.equal(1);
-  });
-  it('should get accurate active point', () => {
-    Sut.build('abcabd');
-    Sut.activeEdge = 'b';
-    Sut.activeLength = 2;
-
-    const result = Sut.getActivePoint();
-
-    expect(Sut.root).to.deep.equal(Sut.activeNode);
-    expect(result).to.equal('a');
-    //expect(Sut.tostring(Sut.getActiveNode())).to.equal('abd');
-  });
-  it('should set active point to undefined when starting', () => {
-    Sut.activeEdge = void 0;
-    Sut.activeLength = 0;
-    Sut.activeNode = void 0;
-
-    const result = Sut.getActivePoint();
-
-    expect(result).to.be.undefined;
-    expect(Sut.getActiveNode()).to.be.undefined;
-  });
-*/
 
   it('should return accurately if path exists from node to letter', () => {
     const Sut = new sutImport('xyzxyaxyz$');
@@ -224,11 +169,10 @@ describe.only('Searchbox utility', () => {
     expect(node.edges.get('v').getRightInd()).to.equal(5);
   });
 
-  it.only('should break node at next different character', () => {
+  it('should break node at next different character', () => {
     const Sut = new sutImport('xyzxya');
     Sut.build();
 
-    console.log('suff', Sut.root.edges.get('x').suffixLink);
     expect(Sut.root.edges.get('x').edges.size).to.equal(2);
     expect(Sut.root.edges.get('x').getRightInd()).to.equal(1);
     expect(Sut.root.edges.get('x').getLeftInd).to.equal(0);
@@ -236,12 +180,13 @@ describe.only('Searchbox utility', () => {
     expect(Sut.root.edges.get('x').edges.get('a').getLeftInd).to.equal(5);
     expect(Sut.root.edges.get('y').edges.size).to.equal(2);
     expect(Sut.root.edges.get('z').edges.size).to.equal(0);
+    expect(Sut.root.edges.get('x').suffixLink.edges.size).to.equal(2);
   });
 
   it('should point internal node to root', () => {
     const Sut = new sutImport('xyzxya');
     Sut.build();
 
-    expect(Sut.root.edges.get('x').suffixLink).to.deep.equal(Sut.root);
+    expect(Sut.root.edges.get('x').suffixLink).to.deep.equal(Sut.root.edges.get('y'));
   });
 });

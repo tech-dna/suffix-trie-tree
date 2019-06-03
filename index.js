@@ -68,7 +68,7 @@ export default class Ukonnens {
     this.remaining--;
   }
 
-  walkInnerNode() {
+  walkInnerNode(prevNewNode) {
     if (this.activeLength <= 0) return;
     const nextChar = this.getPhaseChar();
     const nextCharInActiveNode = this.getNodeNextChar();
@@ -79,7 +79,10 @@ export default class Ukonnens {
     else {
       this.split(this.activeNode, this.activeLength, nextChar, this.phase);
       // this.activeNode.suffixLink = this.root;
-      this.remaining++;
+      // this.remaining++;
+      if (prevNewNode) {
+        prevNewNode.suffixLink = this.activeNode;
+      }
       this.activeEdgePos++;
       this.activeLength--;
       const oldActiveNode = this.activeNode;
@@ -96,8 +99,6 @@ export default class Ukonnens {
 
   build(string) {
     if (string) this.text = string;
-    // if (this.phase >= this.text.length - 1) return;
-    // if (!this.activeNode) this.activeNode = this.root;
 
     this.activeNode = this.getActiveNode();
     this.startPhase();
@@ -107,7 +108,6 @@ export default class Ukonnens {
       const currentPhaseChar = this.getPhaseChar();
       if (!this.pathExistsFrom(this.activeNode, currentPhaseChar)) {
         if (currentPhaseChar) {
-          console.log('aaaaaa', this.activeNode, currentPhaseChar);
           this.activeNode.edges.set(currentPhaseChar
             , this.createNode(this.phase, () => this.end));
         }
@@ -120,7 +120,6 @@ export default class Ukonnens {
         break;
       }
     }
-    // this.startPhase();
     if (this.phase + 1 < this.text.length) this.build();
   }
 
@@ -142,7 +141,7 @@ export default class Ukonnens {
     return this.text[this.activeEdgePos + this.activeLength - 1];
   }
 
-  getActiveNode(forceWalk = false) {
+  getActiveNode() {
     if (this.activeEdgePos < 0) return this.root;
     if (this.activeLength === 0) return this.root;
 
@@ -158,7 +157,7 @@ export default class Ukonnens {
     return this.text[this.phase + 1];
   }
 
-  startPhase(i = 0) {
+  startPhase() {
     this.end++;
     this.remaining++;
     this.phase++;
@@ -166,7 +165,6 @@ export default class Ukonnens {
   createNode(getLeftInd, getRightInd) {
     const rightIndex = 0;
 
-    console.log('rcreated node for', this.text[getLeftInd]);
     // getLeftInd is not zero indexed
     return {
       edges: new Map(),
