@@ -189,4 +189,11 @@ describe.only('Searchbox utility', () => {
 
     expect(Sut.root.edges.get('x').suffixLink).to.deep.equal(Sut.root.edges.get('y'));
   });
+
+  it('should follow none root active node to suffixLink during processing', () => {
+    const Sut = new sutImport('xyzxyaxyz');
+    Sut.build();
+
+    expect(Sut.getNodeText(Sut.root.edges.get('x').edges.get('z'))).is.equal('zxyaxyz');
+  });
 });

@@ -107,11 +107,12 @@ export default class Ukonnens {
     while(this.remaining > 0) {
       const currentPhaseChar = this.getPhaseChar();
       if (!this.pathExistsFrom(this.activeNode, currentPhaseChar)) {
+        // rule 2 extension
         if (currentPhaseChar) {
           this.activeNode.edges.set(currentPhaseChar
             , this.createNode(this.phase, () => this.end));
-        }
 
+        }
         this.remaining--;
       }
       else {
