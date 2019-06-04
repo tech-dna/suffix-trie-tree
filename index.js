@@ -5,8 +5,7 @@ export function buildTree(entries) {
 export default class Ukonnens {
   constructor(text){
     this.activeLength = 0;
-    this.activeNode;
-    this.activeEdge;
+    this.activeEdge = void 0;
     this.activeEdgePos = -1;
     this.remaining = 0;
     this.end = -1;
@@ -30,6 +29,7 @@ export default class Ukonnens {
     this.toString = this.toString.bind(this);
 
     this.root = this.createNode(-1);
+    this.activeNode = this.root;
   }
 
   pathExistsFrom(node, letter) {
@@ -72,21 +72,23 @@ export default class Ukonnens {
     if (this.activeLength <= 0) return;
     const nextChar = this.getPhaseChar();
     const nextCharInActiveNode = this.getNodeNextChar();
+    const nodeFromPos = this.getActiveNode();
     if (nextChar === nextCharInActiveNode) {
+      //rule 3 extension
       this.activeLength++;
       return this.build();
     }
     else {
-      this.split(this.activeNode, this.activeLength, nextChar, this.phase);
+      this.split(nodeFromPos, this.activeLength, nextChar, this.phase);
       // this.activeNode.suffixLink = this.root;
       // this.remaining++;
       if (prevNewNode) {
-        prevNewNode.suffixLink = this.activeNode;
+        prevNewNode.suffixLink = nodeFromPos;
       }
       this.activeEdgePos++;
       this.activeLength--;
-      const oldActiveNode = this.activeNode;
-      this.activeNode = this.getActiveNode();
+      const oldActiveNode = nodeFromPos;
+      // this.activeNode = this.getActiveNode();
       const nextChar2 = this.getNextCharacter();
       const nextCharInActiveNode2 = this.getNodeNextChar();
       if (nextChar2 != nextCharInActiveNode2) {
@@ -100,23 +102,23 @@ export default class Ukonnens {
   build(string) {
     if (string) this.text = string;
 
-    this.activeNode = this.getActiveNode();
+    const nodeFromActiveNode = this.getActiveNode();
     this.startPhase();
     this.walkInnerNode();
     // if (this.phase + 1 > this.text.length) return;
     while(this.remaining > 0) {
       const currentPhaseChar = this.getPhaseChar();
-      if (!this.pathExistsFrom(this.activeNode, currentPhaseChar)) {
+      if (!this.pathExistsFrom(nodeFromActiveNode, currentPhaseChar)) {
         // rule 2 extension
         if (currentPhaseChar) {
-          this.activeNode.edges.set(currentPhaseChar
+          nodeFromActiveNode.edges.set(currentPhaseChar
             , this.createNode(this.phase, () => this.end));
-
         }
+
         this.remaining--;
       }
       else {
-        this.activeEdgePos = this.getEdgePos(this.activeNode.edges.get(currentPhaseChar));
+        this.activeEdgePos = this.getEdgePos(nodeFromActiveNode.edges.get(currentPhaseChar));
         this.activeLength++;
         break;
       }
@@ -136,8 +138,8 @@ export default class Ukonnens {
     return this.text.substring(node.getLeftInd, node.getRightInd() + 1);
   }
 
-  getActivePoint() {
-    if (!this.activeNode) return;
+  getActivePoint(fromNode = this.activeNode) {
+    if (!fromNode) return;
     // active point is position base 1 (not 0)
     return this.text[this.activeEdgePos + this.activeLength - 1];
   }
@@ -148,6 +150,7 @@ export default class Ukonnens {
 
     const text = this.text[this.activeEdgePos];
     const node = this.root.edges.get(text);
+    if (!node) return this.root;
     const currentText = this.text[node.getLeftInd + this.activeLength];
 
     return node.edges.get(currentText)
